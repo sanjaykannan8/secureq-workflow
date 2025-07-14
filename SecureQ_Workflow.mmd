@@ -1,0 +1,92 @@
+graph TD
+    A["🚀 SecureQ Initialization"] --> B["📊 Database Connection"]
+    B --> C["🗃️ Create header_manager Table"]
+    C --> D["🧹 Start Cleanup Thread"]
+    
+    %% Header Management Flow
+    E["📋 Request Session Header"] --> F["🎲 Generate Random String<br/>(6 chars alpranumeric)"]
+    F --> G["🏷️ Create Header: SQ-{random}"]
+    G --> H["🔍 Check Uniqueness in DB"]
+    H --> I{Header Exists?}
+    I -->|Yes| F
+    I -->|No| J["💾 Store Header + Timestamp"]
+    J --> K["✅ Return Header to Client"]
+    
+    %% Background Cleanup
+    D --> L["⏰ Every 10 Minutes"]
+    L --> M["🗑️ Delete Headers > 10min old"]
+    M --> N["💾 Commit Cleanup"]
+    N --> L
+    
+    %% Role Creation Flow
+    O["🔐 Create Restricted Role"] --> P["📝 Role: app_reader<br/>Table: users<br/>Restrict: ['password']"]
+    P --> Q["🔍 Check Role Exists"]
+    Q --> R{Role Exists?}
+    R -->|Yes| S["❌ Role Creation Failed"]
+    R -->|No| T["📋 Get All Table Columns"]
+    T --> U["🚫 Calculate Allowed Columns<br/>(All - Restricted)"]
+    U --> V["👤 CREATE ROLE with LOGIN"]
+    V --> W["🔒 Set Role Password"]
+    W --> X["📊 CREATE VIEW pview<br/>(Allowed columns only)"]
+    X --> Y["🚫 REVOKE ALL on Original Table"]
+    Y --> Z["✅ GRANT SELECT on pview"]
+    Z --> AA["✅ Role Created Successfully"]
+    
+    %% Query Security Flow
+    BB["🔒 Secure Query Execution"] --> CC["📝 Template Query:<br/>SELECT name FROM users WHERE id = 1"]
+    CC --> DD["📝 Actual Query:<br/>SELECT name FROM users WHERE id = 42"]
+    DD --> EE["🔍 Generate Template Fingerprint"]
+    EE --> FF["🔤 Parse SQL with sqlglot AST"]
+    FF --> GG["🎯 Map Nodes to Characters:<br/>k=keywords, l=literals, t=tables<br/>c=columns, o=operators, etc."]
+    GG --> HH["🔍 Template Fingerprint: 'kctcol'"]
+    
+    DD --> II["🔍 Generate Actual Fingerprint"]
+    II --> JJ["🔤 Parse SQL with sqlglot AST"]
+    JJ --> KK["🎯 Map Nodes to Characters"]
+    KK --> LL["🔍 Actual Fingerprint: 'kctcol'"]
+    
+    HH --> MM{Fingerprints Match?}
+    LL --> MM
+    MM -->|No| NN["🚨 SECURITY VIOLATION<br/>Query structure mismatch"]
+    MM -->|Yes| OO["🔐 Connect with Restricted Role"]
+    OO --> PP["📊 Execute Query on pview"]
+    PP --> QQ["✅ Return Results Securely"]
+    
+    NN --> RR["📝 Log Security Event"]
+    RR --> SS["❌ Reject Query"]
+    
+    %% Security Layers
+    subgraph "🛡️ Security Layers"
+        TT["1️⃣ Connection Layer<br/>PostgreSQL Authentication"]
+        UU["2️⃣ Session Layer<br/>Time-based Headers"]
+        VV["3️⃣ Authorization Layer<br/>Role-based Access"]
+        WW["4️⃣ Query Layer<br/>SQL Fingerprinting"]
+        XX["5️⃣ Execution Layer<br/>Minimal Privileges"]
+    end
+    
+    %% Fingerprint Character Mapping
+    subgraph "🔤 Fingerprint Mapping"
+        YY["k = Keywords (SELECT, WHERE, JOIN)"]
+        ZZ["l = Literals (values, numbers, NULL)"]
+        AAA["t = Table references"]
+        BBB["c = Column references"]
+        CCC["i = Identifiers (aliases)"]
+        DDD["o = Operators (=, >, AND, OR)"]
+        EEE["f = Functions (COUNT, SUM)"]
+        FFF["s = Structural (parentheses)"]
+    end
+    
+    %% Risk Mitigation
+    subgraph "🚨 Threat Prevention"
+        GGG["SQL Injection ➜ Fingerprint Validation"]
+        HHH["Privilege Escalation ➜ Role Isolation"]
+        III["Data Exposure ➜ Column Restrictions"]
+        JJJ["Session Hijacking ➜ Time Expiration"]
+    end
+
+    style A fill:#e1f5fe
+    style BB fill:#f3e5f5
+    style O fill:#e8f5e8
+    style E fill:#fff3e0
+    style NN fill:#ffebee
+    style QQ fill:#e8f5e8 
