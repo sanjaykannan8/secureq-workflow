@@ -135,9 +135,9 @@
         }
         
         #mermaid-diagram {
-            min-height: 800px;
+            min-height: 1000px;
             width: 100%;
-            overflow: visible;
+            overflow: auto;
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -146,6 +146,30 @@
             padding: 20px;
             margin-top: 20px;
             box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .mermaid svg {
+            max-width: 100%;
+            height: auto;
+            cursor: grab;
+        }
+
+        .mermaid svg:active {
+            cursor: grabbing;
+        }
+
+        /* Interactive node styles */
+        .node rect, .node circle, .node polygon {
+            transition: all 0.3s ease;
+        }
+
+        .node:hover rect, .node:hover circle, .node:hover polygon {
+            filter: brightness(1.1);
+            stroke-width: 3px;
+        }
+
+        .clickable-node {
+            cursor: pointer;
         }
 
         .info-box {
@@ -311,8 +335,11 @@
             <h1>🛡️ SecureQ Security Workflow</h1>
             
             <div class="action-buttons">
-                <button class="btn btn-primary" onclick="openFilesModal()">
-                    📁 View Documentation Files
+                <button class="btn btn-primary" onclick="openDocumentationModal()">
+                    📖 View SecureQ Documentation
+                </button>
+                <button class="btn btn-secondary" onclick="openFilesModal()">
+                    📁 View Files
                 </button>
                 <button class="btn btn-secondary" onclick="resetZoom()">
                     🔍 Reset Zoom
@@ -331,7 +358,10 @@
         <div class="diagram-container">
             <div class="diagram-header">
                 <h3>🔄 Interactive Security Workflow</h3>
-                <p>Scroll horizontally to explore different security layers • Zoom controls below</p>
+                <p>
+                    <strong>Interactive Features:</strong> 
+                    Click nodes for details • Drag to pan • Scroll to zoom • Hover for effects
+                </p>
             </div>
             
             <div class="zoom-controls">
@@ -342,115 +372,106 @@
             
             <div id="mermaid-diagram">
                 <div class="mermaid">
-flowchart TB
-    %% Main Initialization Flow
-    A["SecureQ Initialization"] --> B["Database Connection"]
-    B --> C["Create header_manager Table"]
-    C --> D["Start Background Cleanup Thread"]
+graph TD
+    A["🚀 SecureQ Initialization"] --> B["📊 Database Connection"]
+    B --> C["🗃️ Create header_manager Table"]
+    C --> D["🧹 Start Cleanup Thread"]
     
-    %% Core Security Flows
-    D --> E["Security Operations Ready"]
-    E --> F["Header Management"]
-    E --> G["Role Creation"]
-    E --> H["Query Validation"]
+    %% Header Management Flow
+    E["📋 Request Session Header"] --> F["🎲 Generate Random String<br/>(6 chars alpranumeric)"]
+    F --> G["🏷️ Create Header: SQ-{random}"]
+    G --> H["🔍 Check Uniqueness in DB"]
+    H --> I{Header Exists?}
+    I -->|Yes| F
+    I -->|No| J["💾 Store Header + Timestamp"]
+    J --> K["✅ Return Header to Client"]
     
-    %% Header Management Vertical Flow
-    F --> F1["Request Session Header"]
-    F1 --> F2["Generate Random String<br/>6 chars alphanumeric"]
-    F2 --> F3["Create Header: SQ-random"]
-    F3 --> F4["Check Uniqueness in DB"]
-    F4 --> F5{Header Exists?}
-    F5 -->|Yes| F2
-    F5 -->|No| F6["Store Header + Timestamp"]
-    F6 --> F7["Return Header to Client"]
+    %% Background Cleanup
+    D --> L["⏰ Every 10 Minutes"]
+    L --> M["🗑️ Delete Headers > 10min old"]
+    M --> N["💾 Commit Cleanup"]
+    N --> L
     
-    %% Cleanup Process
-    D --> L1["Every 10 Minutes"]
-    L1 --> L2["Delete Headers older than 10min"]
-    L2 --> L3["Commit Cleanup Transaction"]
-    L3 --> L1
+    %% Role Creation Flow
+    O["🔐 Create Restricted Role"] --> P["📝 Role: app_reader<br/>Table: users<br/>Restrict: ['password']"]
+    P --> Q["🔍 Check Role Exists"]
+    Q --> R{Role Exists?}
+    R -->|Yes| S["❌ Role Creation Failed"]
+    R -->|No| T["📋 Get All Table Columns"]
+    T --> U["🚫 Calculate Allowed Columns<br/>(All - Restricted)"]
+    U --> V["👤 CREATE ROLE with LOGIN"]
+    V --> W["🔒 Set Role Password"]
+    W --> X["📊 CREATE VIEW pview<br/>(Allowed columns only)"]
+    X --> Y["🚫 REVOKE ALL on Original Table"]
+    Y --> Z["✅ GRANT SELECT on pview"]
+    Z --> AA["✅ Role Created Successfully"]
     
-    %% Role Creation Vertical Flow
-    G --> G1["Define Role Parameters<br/>Table: users<br/>Restrict: password"]
-    G1 --> G2["Check if Role Exists"]
-    G2 --> G3{Role Exists?}
-    G3 -->|Yes| G4["Role Creation Failed"]
-    G3 -->|No| G5["Get All Table Columns"]
-    G5 --> G6["Calculate Allowed Columns<br/>All - Restricted"]
-    G6 --> G7["CREATE ROLE with LOGIN"]
-    G7 --> G8["Set Role Password"]
-    G8 --> G9["CREATE VIEW pview<br/>Allowed columns only"]
-    G9 --> G10["REVOKE ALL on Original Table"]
-    G10 --> G11["GRANT SELECT on pview"]
-    G11 --> G12["Role Created Successfully"]
+    %% Query Security Flow
+    BB["🔒 Secure Query Execution"] --> CC["📝 Template Query:<br/>SELECT name FROM users WHERE id = 1"]
+    CC --> DD["📝 Actual Query:<br/>SELECT name FROM users WHERE id = 42"]
+    DD --> EE["🔍 Generate Template Fingerprint"]
+    EE --> FF["🔤 Parse SQL with sqlglot AST"]
+    FF --> GG["🎯 Map Nodes to Characters:<br/>k=keywords, l=literals, t=tables<br/>c=columns, o=operators, etc."]
+    GG --> HH["🔍 Template Fingerprint: 'kctcol'"]
     
-    %% Query Security Vertical Flow
-    H --> H1["Receive Template Query<br/>SELECT name FROM users WHERE id = 1"]
-    H1 --> H2["Receive Actual Query<br/>SELECT name FROM users WHERE id = 42"]
-    H2 --> H3["Generate Template Fingerprint"]
-    H3 --> H4["Parse SQL with sqlglot AST"]
-    H4 --> H5["Map AST Nodes to Characters<br/>k=keywords, l=literals, t=tables<br/>c=columns, o=operators"]
-    H5 --> H6["Template Fingerprint: kctcol"]
+    DD --> II["🔍 Generate Actual Fingerprint"]
+    II --> JJ["🔤 Parse SQL with sqlglot AST"]
+    JJ --> KK["🎯 Map Nodes to Characters"]
+    KK --> LL["🔍 Actual Fingerprint: 'kctcol'"]
     
-    H2 --> H7["Generate Actual Fingerprint"]
-    H7 --> H8["Parse SQL with sqlglot AST"]
-    H8 --> H9["Map AST Nodes to Characters"]
-    H9 --> H10["Actual Fingerprint: kctcol"]
+    HH --> MM{Fingerprints Match?}
+    LL --> MM
+    MM -->|No| NN["🚨 SECURITY VIOLATION<br/>Query structure mismatch"]
+    MM -->|Yes| OO["🔐 Connect with Restricted Role"]
+    OO --> PP["📊 Execute Query on pview"]
+    PP --> QQ["✅ Return Results Securely"]
     
-    H6 --> H11{Fingerprints Match?}
-    H10 --> H11
-    H11 -->|No| H12["SECURITY VIOLATION<br/>Query structure mismatch"]
-    H11 -->|Yes| H13["Connect with Restricted Role"]
-    H13 --> H14["Execute Query on pview"]
-    H14 --> H15["Return Results Securely"]
+    NN --> RR["📝 Log Security Event"]
+    RR --> SS["❌ Reject Query"]
     
-    H12 --> H16["Log Security Event"]
-    H16 --> H17["Reject Query"]
-    
-    %% Security Architecture
-    subgraph SecurityLayers["Security Layers Architecture"]
-        direction TB
-        SL1["1. Connection Layer<br/>PostgreSQL Authentication"]
-        SL2["2. Session Layer<br/>Time-based Headers"]
-        SL3["3. Authorization Layer<br/>Role-based Access"]
-        SL4["4. Query Layer<br/>SQL Fingerprinting"]
-        SL5["5. Execution Layer<br/>Minimal Privileges"]
-        
-        SL1 --> SL2 --> SL3 --> SL4 --> SL5
+    %% Security Layers
+    subgraph "🛡️ Security Layers"
+        TT["1️⃣ Connection Layer<br/>PostgreSQL Authentication"]
+        UU["2️⃣ Session Layer<br/>Time-based Headers"]
+        VV["3️⃣ Authorization Layer<br/>Role-based Access"]
+        WW["4️⃣ Query Layer<br/>SQL Fingerprinting"]
+        XX["5️⃣ Execution Layer<br/>Minimal Privileges"]
     end
     
-    %% Fingerprint Mapping
-    subgraph FingerprintMap["Fingerprint Character Mapping"]
-        direction TB
-        FM1["k = Keywords SELECT WHERE JOIN"]
-        FM2["l = Literals values numbers NULL"]
-        FM3["t = Table references"]
-        FM4["c = Column references"]
-        FM5["i = Identifiers aliases"]
-        FM6["o = Operators = > < AND OR"]
-        FM7["f = Functions COUNT SUM AVG"]
-        FM8["s = Structural parentheses"]
+    %% Fingerprint Character Mapping
+    subgraph "🔤 Fingerprint Mapping"
+        YY["k = Keywords (SELECT, WHERE, JOIN)"]
+        ZZ["l = Literals (values, numbers, NULL)"]
+        AAA["t = Table references"]
+        BBB["c = Column references"]
+        CCC["i = Identifiers (aliases)"]
+        DDD["o = Operators (=, >, AND, OR)"]
+        EEE["f = Functions (COUNT, SUM)"]
+        FFF["s = Structural (parentheses)"]
     end
     
-    %% Threat Prevention
-    subgraph ThreatPrev["Threat Prevention Mechanisms"]
-        direction TB
-        TP1["SQL Injection<br/>→ Fingerprint Validation"]
-        TP2["Privilege Escalation<br/>→ Role Isolation"]
-        TP3["Data Exposure<br/>→ Column Restrictions"]
-        TP4["Session Hijacking<br/>→ Time Expiration"]
+    %% Risk Mitigation
+    subgraph "🚨 Threat Prevention"
+        GGG["SQL Injection ➜ Fingerprint Validation"]
+        HHH["Privilege Escalation ➜ Role Isolation"]
+        III["Data Exposure ➜ Column Restrictions"]
+        JJJ["Session Hijacking ➜ Time Expiration"]
     end
 
-    %% Styling
-    style A fill:#e1f5fe,stroke:#1976d2,stroke-width:3px
-    style F fill:#fff3e0,stroke:#f57f17,stroke-width:2px
-    style G fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
-    style H fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    style H12 fill:#ffebee,stroke:#d32f2f,stroke-width:3px
-    style H15 fill:#e8f5e8,stroke:#388e3c,stroke-width:3px
-    style SecurityLayers fill:#f8f9fa,stroke:#6c757d,stroke-width:2px
-    style FingerprintMap fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
-    style ThreatPrev fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    %% Click interactions
+    click A "showNodeInfo" "Click for details"
+    click BB "showNodeInfo" "Click for details"
+    click O "showNodeInfo" "Click for details"
+    click E "showNodeInfo" "Click for details"
+    click NN "showNodeInfo" "Click for details"
+    click QQ "showNodeInfo" "Click for details"
+
+    style A fill:#e1f5fe
+    style BB fill:#f3e5f5
+    style O fill:#e8f5e8
+    style E fill:#fff3e0
+    style NN fill:#ffebee
+    style QQ fill:#e8f5e8
                 </div>
             </div>
         </div>
@@ -530,10 +551,24 @@ flowchart TB
                     <strong>SQL Fingerprinting</strong> • <strong>Role-Based Access</strong> • <strong>Session Management</strong> • <strong>Query Validation</strong>
                 </p>
             </div>
-        </div>
-    </div>
+                 </div>
+     </div>
 
-    <div class="export-instructions" style="display: none;">
+     <!-- Documentation Modal -->
+     <div id="documentationModal" class="files-modal">
+         <div class="modal-content" style="max-width: 900px; max-height: 90vh;">
+             <button class="close-btn" onclick="closeDocumentationModal()">&times;</button>
+             <h2 style="color: #2c3e50; margin-bottom: 30px; text-align: center;">📖 SecureQ Documentation</h2>
+             <div id="documentationContent" style="line-height: 1.6; color: #2d3748;">
+                 <div style="text-align: center; padding: 40px; color: #6c757d;">
+                     <div style="font-size: 24px; margin-bottom: 15px;">📄</div>
+                     <p>Loading documentation...</p>
+                 </div>
+             </div>
+         </div>
+     </div>
+
+     <div class="export-instructions" style="display: none;">
             <h3>📥 Export Instructions</h3>
             
             <h4>Method 1: Browser Screenshot (Quick & Easy)</h4>
@@ -619,6 +654,113 @@ flowchart TB
             document.body.style.overflow = 'auto';
         }
 
+        function openDocumentationModal() {
+            document.getElementById('documentationModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            loadDocumentation();
+        }
+
+        function closeDocumentationModal() {
+            document.getElementById('documentationModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Load documentation content
+        async function loadDocumentation() {
+            const contentDiv = document.getElementById('documentationContent');
+            
+            try {
+                const response = await fetch('./SecureQ_Documentation.md');
+                if (!response.ok) {
+                    throw new Error('Documentation file not found');
+                }
+                
+                const markdownContent = await response.text();
+                
+                // Convert markdown to HTML (basic conversion)
+                const htmlContent = markdownToHtml(markdownContent);
+                contentDiv.innerHTML = htmlContent;
+                
+            } catch (error) {
+                contentDiv.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #e74c3c;">
+                        <div style="font-size: 24px; margin-bottom: 15px;">⚠️</div>
+                        <h3>Documentation Not Available</h3>
+                        <p>The SecureQ_Documentation.md file could not be loaded.</p>
+                        <p style="margin-top: 20px; font-size: 14px; color: #6c757d;">
+                            Make sure the file exists in the same directory as this HTML file.
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        // Basic Markdown to HTML converter
+        function markdownToHtml(markdown) {
+            return markdown
+                .replace(/^# (.*$)/gim, '<h1 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin: 30px 0 20px 0;">$1</h1>')
+                .replace(/^## (.*$)/gim, '<h2 style="color: #34495e; margin: 25px 0 15px 0; font-size: 1.5em;">$1</h2>')
+                .replace(/^### (.*$)/gim, '<h3 style="color: #2c3e50; margin: 20px 0 10px 0; font-size: 1.3em;">$1</h3>')
+                .replace(/^#### (.*$)/gim, '<h4 style="color: #2c3e50; margin: 15px 0 8px 0; font-size: 1.1em;">$1</h4>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong style="color: #2c3e50;">$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/`(.*?)`/g, '<code style="background: #f8f9fa; padding: 2px 6px; border-radius: 3px; color: #e74c3c; font-family: monospace;">$1</code>')
+                .replace(/```([\s\S]*?)```/g, '<pre style="background: #2c3e50; color: #ecf0f1; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 15px 0;"><code>$1</code></pre>')
+                .replace(/^- (.*$)/gim, '<li style="margin: 5px 0;">$1</li>')
+                .replace(/^\d+\. (.*$)/gim, '<li style="margin: 5px 0;">$1</li>')
+                .replace(/\n\n/g, '</p><p style="margin: 15px 0;">')
+                .replace(/^(.+)$/gm, function(match) {
+                    if (!match.startsWith('<') && match.trim() !== '') {
+                        return '<p style="margin: 15px 0;">' + match + '</p>';
+                    }
+                    return match;
+                })
+                .replace(/<li[^>]*>.*<\/li>/g, function(match) {
+                    return '<ul style="margin: 10px 0; padding-left: 25px;">' + match + '</ul>';
+                });
+        }
+
+        // Interactive node information
+        function showNodeInfo(nodeId) {
+            const nodeDetails = {
+                'A': {
+                    title: '🚀 SecureQ Initialization',
+                    description: 'The entry point of SecureQ that establishes database connections and sets up the security infrastructure.',
+                    details: ['Creates PostgreSQL connection', 'Initializes header management table', 'Starts background cleanup processes']
+                },
+                'BB': {
+                    title: '🔒 Secure Query Execution',
+                    description: 'The core security mechanism that validates and executes database queries safely.',
+                    details: ['Fingerprint validation', 'Structure comparison', 'Role-based execution']
+                },
+                'O': {
+                    title: '🔐 Role Creation',
+                    description: 'Creates restricted database roles with column-level permissions.',
+                    details: ['Dynamic role generation', 'View-based access control', 'Permission management']
+                },
+                'E': {
+                    title: '📋 Header Management',
+                    description: 'Manages time-based session tokens for secure authentication.',
+                    details: ['Unique token generation', 'Timestamp tracking', 'Automatic expiration']
+                },
+                'NN': {
+                    title: '🚨 Security Violation',
+                    description: 'Triggered when query fingerprints don\'t match, indicating potential SQL injection.',
+                    details: ['Fingerprint mismatch detection', 'Attack prevention', 'Security logging']
+                },
+                'QQ': {
+                    title: '✅ Secure Results',
+                    description: 'Successfully validated and executed query returning secure results.',
+                    details: ['Validated query execution', 'Restricted data access', 'Secure result formatting']
+                }
+            };
+
+            const info = nodeDetails[nodeId];
+            if (info) {
+                alert(`${info.title}\n\n${info.description}\n\nKey Features:\n${info.details.map(d => '• ' + d).join('\n')}`);
+            }
+        }
+
         // Zoom Functions
         function zoomDiagram(scale) {
             currentZoom = scale;
@@ -685,9 +827,14 @@ flowchart TB
 
         // Close modal when clicking outside
         window.onclick = function(event) {
-            const modal = document.getElementById('filesModal');
-            if (event.target === modal) {
+            const filesModal = document.getElementById('filesModal');
+            const docModal = document.getElementById('documentationModal');
+            
+            if (event.target === filesModal) {
                 closeFilesModal();
+            }
+            if (event.target === docModal) {
+                closeDocumentationModal();
             }
         }
 
@@ -695,6 +842,7 @@ flowchart TB
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeFilesModal();
+                closeDocumentationModal();
             }
         });
 
@@ -724,20 +872,86 @@ flowchart TB
                     diagramContainer.style.transition = 'opacity 0.5s ease';
                     clearInterval(checkRendered);
                     
-                    // Add click handlers to diagram elements for better interactivity
-                    svg.style.cursor = 'grab';
-                    svg.addEventListener('mousedown', () => {
-                        svg.style.cursor = 'grabbing';
-                    });
-                    svg.addEventListener('mouseup', () => {
-                        svg.style.cursor = 'grab';
-                    });
+                    // Add interactive features to the diagram
+                    makeDigramInteractive(svg);
                 }
             }, 100);
             
             // Clear the interval after 10 seconds to prevent infinite checking
             setTimeout(() => clearInterval(checkRendered), 10000);
         });
+
+        // Make diagram interactive
+        function makeDigramInteractive(svg) {
+            // Add drag functionality
+            svg.style.cursor = 'grab';
+            
+            let isDragging = false;
+            let startX, startY;
+            
+            svg.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                svg.style.cursor = 'grabbing';
+            });
+            
+            svg.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const deltaX = e.clientX - startX;
+                    const deltaY = e.clientY - startY;
+                    
+                    const rect = svg.getBoundingClientRect();
+                    svg.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${currentZoom})`;
+                }
+            });
+            
+            svg.addEventListener('mouseup', () => {
+                isDragging = false;
+                svg.style.cursor = 'grab';
+            });
+            
+            svg.addEventListener('mouseleave', () => {
+                isDragging = false;
+                svg.style.cursor = 'grab';
+            });
+            
+            // Add hover effects to nodes
+            const nodes = svg.querySelectorAll('.node');
+            nodes.forEach(node => {
+                node.addEventListener('mouseenter', () => {
+                    node.style.filter = 'brightness(1.1) drop-shadow(2px 2px 4px rgba(0,0,0,0.3))';
+                    node.style.transform = 'scale(1.05)';
+                    node.style.transition = 'all 0.3s ease';
+                });
+                
+                node.addEventListener('mouseleave', () => {
+                    node.style.filter = 'none';
+                    node.style.transform = 'scale(1)';
+                });
+            });
+            
+            // Add click handlers to specific nodes
+            const clickableNodes = ['A', 'BB', 'O', 'E', 'NN', 'QQ'];
+            clickableNodes.forEach(nodeId => {
+                const nodeElement = svg.querySelector(`[id*="${nodeId}"]`);
+                if (nodeElement) {
+                    nodeElement.style.cursor = 'pointer';
+                    nodeElement.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        showNodeInfo(nodeId);
+                    });
+                }
+            });
+            
+            // Add scroll zoom functionality
+            svg.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+                const newZoom = Math.max(0.3, Math.min(3.0, currentZoom * zoomFactor));
+                zoomDiagram(newZoom);
+            });
+        }
 
         // Keyboard shortcuts
         document.addEventListener('keydown', function(event) {
