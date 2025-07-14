@@ -3,387 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureQ - Database Security Module</title>
+    <title>SecureQ Workflow Diagram</title>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            min-height: 100vh;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #2c3e50, #3498db);
-            color: white;
-            padding: 60px 40px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><radialGradient id="a" cx="50%" cy="40%"><stop offset="0%" stop-color="%23fff" stop-opacity=".1"/><stop offset="100%" stop-color="%23fff" stop-opacity="0"/></radialGradient></defs><rect width="100" height="20" fill="url(%23a)"/></svg>');
-            opacity: 0.1;
-        }
-
-        .header h1 {
-            font-size: 3.5em;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .header p {
-            font-size: 1.3em;
-            position: relative;
-            z-index: 1;
-            opacity: 0.9;
-        }
-
-        .nav {
-            background-color: #34495e;
-            padding: 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .nav ul {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .nav li {
             margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
         }
-
-        .nav a {
-            display: block;
-            color: white;
-            text-decoration: none;
-            padding: 20px 25px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .nav a:hover {
-            background-color: #3498db;
-            transform: translateY(-2px);
-        }
-
-        .content {
-            padding: 40px;
-        }
-
-        .section {
-            margin-bottom: 60px;
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        .section h2 {
-            color: #2c3e50;
-            font-size: 2.5em;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid #3498db;
-        }
-
-        .section h3 {
-            color: #34495e;
-            font-size: 1.8em;
-            margin: 30px 0 20px 0;
-            padding-left: 20px;
-            border-left: 4px solid #3498db;
-        }
-
-        .section h4 {
-            color: #2c3e50;
-            font-size: 1.4em;
-            margin: 25px 0 15px 0;
-        }
-
-        .diagram-container {
-            background-color: #f8f9fa;
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background-color: white;
             padding: 30px;
-            border-radius: 15px;
-            margin: 30px 0;
-            border: 1px solid #e9ecef;
-            text-align: center;
-        }
-
-        .info-box {
-            background: linear-gradient(135deg, #e7f3ff, #f0f8ff);
-            border: 1px solid #bee5eb;
             border-radius: 10px;
-            padding: 25px;
-            margin: 25px 0;
-            border-left: 5px solid #3498db;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .diagram-container {
+            text-align: center;
+            margin: 20px 0;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e1e1e1;
+        }
+        
+        .export-instructions {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .export-instructions h3 {
+            color: #007bff;
+            margin-top: 0;
+        }
+        
+        .export-instructions code {
+            background-color: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .export-instructions ol {
+            padding-left: 20px;
+        }
+        
+        .export-instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .info-box {
+            background-color: #e7f3ff;
+            border: 1px solid #bee5eb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
         .info-box h4 {
             margin-top: 0;
             color: #0c5460;
-            font-size: 1.3em;
         }
-
-        .warning-box {
-            background: linear-gradient(135deg, #fff3cd, #fef7e3);
-            border: 1px solid #ffeaa7;
-            border-radius: 10px;
-            padding: 25px;
-            margin: 25px 0;
-            border-left: 5px solid #f39c12;
-        }
-
-        .success-box {
-            background: linear-gradient(135deg, #d4edda, #e8f5e8);
-            border: 1px solid #c3e6cb;
-            border-radius: 10px;
-            padding: 25px;
-            margin: 25px 0;
-            border-left: 5px solid #27ae60;
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin: 30px 0;
-        }
-
-        .feature-card {
-            background: white;
-            border: 1px solid #e9ecef;
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-
-        .feature-card h4 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-        }
-
-        code {
-            background-color: #f8f9fa;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-            color: #e74c3c;
-        }
-
-        pre {
-            background-color: #2c3e50;
-            color: #ecf0f1;
-            padding: 20px;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin: 20px 0;
-            font-family: 'Courier New', monospace;
-        }
-
-        pre code {
-            background: none;
-            color: inherit;
-            padding: 0;
-        }
-
-        .method-card {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 15px 0;
-            border-left: 4px solid #3498db;
-        }
-
-        .method-signature {
-            font-family: 'Courier New', monospace;
-            background-color: #2c3e50;
-            color: #ecf0f1;
-            padding: 10px 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-
-        ol, ul {
-            padding-left: 25px;
-            margin: 15px 0;
-        }
-
-        li {
-            margin-bottom: 8px;
-        }
-
-        .fingerprint-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .fingerprint-table th,
-        .fingerprint-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #e9ecef;
-        }
-
-        .fingerprint-table th {
-            background-color: #3498db;
-            color: white;
-            font-weight: 600;
-        }
-
-        .fingerprint-table tr:hover {
-            background-color: #f8f9fa;
-        }
-
-        .footer {
-            background-color: #2c3e50;
-            color: white;
-            text-align: center;
-            padding: 30px;
-            margin-top: 60px;
-        }
-
+        
         #mermaid-diagram {
             min-height: 600px;
-        }
-
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2.5em;
-            }
-            
-            .content {
-                padding: 20px;
-            }
-            
-            .nav ul {
-                flex-direction: column;
-            }
-            
-            .feature-grid {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <h1>🛡️ SecureQ</h1>
-            <p>Advanced PostgreSQL Security Module with Multi-Layer Protection</p>
-        </header>
-
-        <nav class="nav">
-            <ul>
-                <li><a href="#overview" onclick="showSection('overview')">Overview</a></li>
-                <li><a href="#workflow" onclick="showSection('workflow')">Workflow</a></li>
-                <li><a href="#architecture" onclick="showSection('architecture')">Architecture</a></li>
-                <li><a href="#methods" onclick="showSection('methods')">Methods</a></li>
-                <li><a href="#security" onclick="showSection('security')">Security</a></li>
-                <li><a href="#usage" onclick="showSection('usage')">Usage</a></li>
-                <li><a href="#best-practices" onclick="showSection('best-practices')">Best Practices</a></li>
-            </ul>
-        </nav>
-
-        <main class="content">
-            <!-- Overview Section -->
-            <section id="overview" class="section active">
-                <h2>📋 Overview</h2>
-                
-                <div class="info-box">
-                    <h4>About SecureQ</h4>
-                    <p>SecureQ is a security-focused PostgreSQL database query handler designed to provide secure, role-based database access with advanced query validation and header management capabilities. It implements multiple layers of security to prevent SQL injection and unauthorized access.</p>
-                </div>
-
-                <h3>🔐 Key Security Features</h3>
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <h4>🎯 SQL Fingerprinting</h4>
-                        <p>Advanced query structure validation using AST parsing to detect and prevent SQL injection attacks through structural analysis.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h4>👥 Role-Based Access Control</h4>
-                        <p>Granular permission management with restricted views and column-level security controls.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h4>🏷️ Header Management</h4>
-                        <p>Time-based session tokens with automatic cleanup and unique identifier generation.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h4>🔍 Query Validation</h4>
-                        <p>Structure-based query comparison to ensure queries match predefined templates and prevent malicious modifications.</p>
-                    </div>
-                </div>
-
-                <h3>🏗️ Architecture Components</h3>
-                <ul>
-                    <li><strong>Database Connection Management</strong>: Secure PostgreSQL connection handling</li>
-                    <li><strong>Header Lifecycle Management</strong>: Automatic token generation and cleanup</li>
-                    <li><strong>Role Creation & Permission System</strong>: Dynamic role creation with column-level restrictions</li>
-                    <li><strong>Query Fingerprinting Engine</strong>: SQL structure analysis using sqlglot</li>
-                </ul>
-
-                <div class="success-box">
-                    <h4>✅ Zero Trust Security Model</h4>
-                    <p>SecureQ implements a comprehensive Zero Trust approach where every query is validated, every session is time-limited, and every database operation uses minimal privileges.</p>
-                </div>
-            </section>
-
-            <!-- Workflow Section -->
-            <section id="workflow" class="section">
-                <h2>🔄 Security Workflow</h2>
-                
-                <div class="info-box">
-                    <h4>📊 Interactive Workflow Diagram</h4>
-                    <p>This diagram illustrates the complete security architecture of SecureQ, showing how multiple security layers work together to provide secure database access.</p>
-                </div>
-
-                <div class="diagram-container">
-                    <div id="mermaid-diagram">
-                        <div class="mermaid">
+        <h1>🛡️ SecureQ Security Workflow</h1>
+        
+        <div class="info-box">
+            <h4>📋 About This Diagram</h4>
+            <p>This workflow diagram illustrates the complete security architecture of the SecureQ module, showing how multiple security layers work together to provide secure database access with advanced query validation and role-based permissions.</p>
+        </div>
+        
+        <div class="diagram-container">
+            <div id="mermaid-diagram">
+                <div class="mermaid">
 graph TD
     A["🚀 SecureQ Initialization"] --> B["📊 Database Connection"]
     B --> C["🗃️ Create header_manager Table"]
@@ -476,375 +188,21 @@ graph TD
     style E fill:#fff3e0
     style NN fill:#ffebee
     style QQ fill:#e8f5e8
-                        </div>
-                    </div>
                 </div>
-
-                <h3>🔤 Fingerprint Character Mapping</h3>
-                <table class="fingerprint-table">
-                    <thead>
-                        <tr>
-                            <th>Character</th>
-                            <th>Element Type</th>
-                            <th>Examples</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td><code>k</code></td><td>Keywords/Commands</td><td>SELECT, INSERT, WHERE, JOIN, FROM</td></tr>
-                        <tr><td><code>l</code></td><td>Literals/Values</td><td>Strings, numbers, NULL, *</td></tr>
-                        <tr><td><code>t</code></td><td>Table references</td><td>users, products, orders</td></tr>
-                        <tr><td><code>c</code></td><td>Column references</td><td>name, email, id</td></tr>
-                        <tr><td><code>i</code></td><td>Identifiers</td><td>Aliases, column names in INSERT</td></tr>
-                        <tr><td><code>o</code></td><td>Operators</td><td>=, >, <, AND, OR, NOT</td></tr>
-                        <tr><td><code>f</code></td><td>Functions</td><td>COUNT, SUM, AVG, MIN, MAX</td></tr>
-                        <tr><td><code>s</code></td><td>Structural elements</td><td>Parentheses, brackets</td></tr>
-                        <tr><td><code>u</code></td><td>UPDATE-specific</td><td>SET clause elements</td></tr>
-                    </tbody>
-                </table>
-            </section>
-
-            <!-- Architecture Section -->
-            <section id="architecture" class="section">
-                <h2>🏗️ Security Architecture</h2>
-
-                <h3>🛡️ Multi-Layer Security Model</h3>
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <h4>1️⃣ Connection Layer</h4>
-                        <p>Secure PostgreSQL connection with proper authentication and encrypted communication.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h4>2️⃣ Session Layer</h4>
-                        <p>Time-based header management with automatic expiration every 10 minutes.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h4>3️⃣ Authorization Layer</h4>
-                        <p>Role-based access with column restrictions and view-based isolation.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h4>4️⃣ Query Layer</h4>
-                        <p>Structure validation using SQL fingerprinting and AST analysis.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h4>5️⃣ Execution Layer</h4>
-                        <p>Isolated execution with minimal privileges using restricted roles.</p>
-                    </div>
-                </div>
-
-                <h3>🚨 Threat Prevention Mechanisms</h3>
-                <div class="warning-box">
-                    <h4>🛡️ Defense Strategies</h4>
-                    <ul>
-                        <li><strong>SQL Injection</strong> → Fingerprint validation blocks structure changes</li>
-                        <li><strong>Privilege Escalation</strong> → Role isolation with restricted views</li>
-                        <li><strong>Data Exposure</strong> → Column-level access control</li>
-                        <li><strong>Session Hijacking</strong> → Automatic header expiration</li>
-                    </ul>
-                </div>
-            </section>
-
-            <!-- Methods Section -->
-            <section id="methods" class="section">
-                <h2>🔧 Method Documentation</h2>
-
-                <div class="method-card">
-                    <h3>Constructor</h3>
-                    <div class="method-signature">SecureQ(user, password, database, host=None, port=None)</div>
-                    <p><strong>Purpose:</strong> Initialize SecureQ instance with database connection</p>
-                    <h4>Parameters:</h4>
-                    <ul>
-                        <li><code>user</code>: Database username for administrative operations</li>
-                        <li><code>password</code>: Database password</li>
-                        <li><code>database</code>: Target database name</li>
-                        <li><code>host</code>: Database host (default: 'localhost')</li>
-                        <li><code>port</code>: Database port (default: 5432)</li>
-                    </ul>
-                </div>
-
-                <div class="method-card">
-                    <h3>create_header()</h3>
-                    <div class="method-signature">create_header() → str</div>
-                    <p><strong>Purpose:</strong> Generates unique, time-stamped session headers</p>
-                    <h4>Process:</h4>
-                    <ol>
-                        <li>Generates random 6-character alphanumeric string</li>
-                        <li>Creates header format: <code>SQ-{random}</code></li>
-                        <li>Ensures uniqueness by checking against existing headers</li>
-                        <li>Stores header with current timestamp in database</li>
-                        <li>Returns the generated header</li>
-                    </ol>
-                </div>
-
-                <div class="method-card">
-                    <h3>Crole()</h3>
-                    <div class="method-signature">Crole(role, table, column, value) → bool</div>
-                    <p><strong>Purpose:</strong> Creates restricted database roles with column-level permissions</p>
-                    <h4>Parameters:</h4>
-                    <ul>
-                        <li><code>role</code>: Name of the role to create</li>
-                        <li><code>table</code>: Target table for access control</li>
-                        <li><code>column</code>: List of columns to RESTRICT (exclude from access)</li>
-                        <li><code>value</code>: Password for the new role</li>
-                    </ul>
-                    <h4>Security Benefits:</h4>
-                    <ul>
-                        <li>Column-Level Security: Prevents access to sensitive fields</li>
-                        <li>Read-Only Access: No INSERT/UPDATE/DELETE permissions</li>
-                        <li>View-Based Isolation: Users see only filtered data</li>
-                    </ul>
-                </div>
-
-                <div class="method-card">
-                    <h3>create_fingerprint()</h3>
-                    <div class="method-signature">create_fingerprint(query) → str</div>
-                    <p><strong>Purpose:</strong> Generates structural fingerprint of SQL queries using AST parsing</p>
-                    <h4>Process:</h4>
-                    <ol>
-                        <li>SQL Parsing: Uses sqlglot to parse query into AST</li>
-                        <li>Node Traversal: Recursively visits all AST nodes</li>
-                        <li>Type Classification: Maps each node to fingerprint character</li>
-                        <li>Fingerprint Generation: Concatenates characters in traversal order</li>
-                    </ol>
-                </div>
-
-                <div class="method-card">
-                    <h3>s_query()</h3>
-                    <div class="method-signature">s_query(d_query, o_query) → bool</div>
-                    <p><strong>Purpose:</strong> Secure query execution with structure validation</p>
-                    <h4>Parameters:</h4>
-                    <ul>
-                        <li><code>d_query</code>: Template/reference query (defines allowed structure)</li>
-                        <li><code>o_query</code>: Actual query to execute (must match structure)</li>
-                    </ul>
-                    <h4>Security Process:</h4>
-                    <ol>
-                        <li>Generate fingerprints for both template and actual queries</li>
-                        <li>Compare fingerprints for exact structural match</li>
-                        <li>If match: execute with restricted role privileges</li>
-                        <li>If mismatch: reject and log security violation</li>
-                    </ol>
-                </div>
-            </section>
-
-            <!-- Security Section -->
-            <section id="security" class="section">
-                <h2>🔒 Security Features</h2>
-
-                <h3>🎯 SQL Injection Prevention</h3>
-                <div class="info-box">
-                    <h4>How Fingerprinting Stops Attacks</h4>
-                    <p>SecureQ's fingerprinting system creates a structural signature of SQL queries. Any attempt to inject malicious code changes the query structure, resulting in a different fingerprint that gets rejected.</p>
-                </div>
-
-                <h4>Example Attack Prevention:</h4>
-                <pre><code>// Template Query (Allowed)
-SELECT name FROM users WHERE id = 1
-Fingerprint: "kctcol"
-
-// Injection Attempt (Blocked)
-SELECT name FROM users WHERE id = 1 OR 1=1
-Fingerprint: "kctcolool"  // Different structure = BLOCKED</code></pre>
-
-                <h3>👥 Role-Based Access Control</h3>
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <h4>🚫 Column Restrictions</h4>
-                        <p>Sensitive columns like passwords are completely hidden from restricted roles through view-based isolation.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h4>📖 Read-Only Access</h4>
-                        <p>Restricted roles cannot modify data, only read from approved columns through secure views.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h4>🔍 View Isolation</h4>
-                        <p>Each role sees only a filtered view of data, never the original tables with sensitive information.</p>
-                    </div>
-                </div>
-
-                <h3>⏱️ Session Security</h3>
-                <ul>
-                    <li><strong>Time-Based Expiration:</strong> Headers automatically expire after 10 minutes</li>
-                    <li><strong>Unique Tokens:</strong> Each session gets a cryptographically random identifier</li>
-                    <li><strong>Background Cleanup:</strong> Automatic removal of expired sessions prevents bloat</li>
-                    <li><strong>Collision Prevention:</strong> Uniqueness checks prevent token duplication</li>
-                </ul>
-
-                <div class="warning-box">
-                    <h4>⚠️ Security Considerations</h4>
-                    <ul>
-                        <li>Always validate query templates before production use</li>
-                        <li>Monitor fingerprint mismatches for potential attacks</li>
-                        <li>Regularly audit role permissions and access patterns</li>
-                        <li>Keep background cleanup running for session hygiene</li>
-                    </ul>
-                </div>
-            </section>
-
-            <!-- Usage Section -->
-            <section id="usage" class="section">
-                <h2>💻 Usage Examples</h2>
-
-                <h3>🚀 Basic Setup</h3>
-                <pre><code># Initialize SecureQ instance
-sq = SecureQ(
-    user='admin_user',
-    password='admin_pass',
-    database='myapp_db',
-    host='localhost',
-    port=5432
-)</code></pre>
-
-                <h3>👤 Role Creation</h3>
-                <pre><code># Create role that can access all columns except sensitive ones
-success = sq.Crole(
-    role='app_reader',
-    table='users',
-    column=['password', 'secret_key'],  # Columns to RESTRICT
-    value='reader_password'
-)
-
-if success:
-    print("✅ Role created successfully")
-else:
-    print("❌ Role creation failed")</code></pre>
-
-                <h3>🔒 Secure Query Execution</h3>
-                <pre><code># Define template query structure
-template = "SELECT name, email FROM users WHERE id = 1"
-
-# Execute actual query (must match template structure)
-actual = "SELECT name, email FROM users WHERE id = 42"
-
-# Execute securely
-result = sq.s_query(template, actual)
-
-if result:
-    print("✅ Query executed successfully")
-else:
-    print("🚨 Security violation detected")</code></pre>
-
-                <h3>🏷️ Header Management</h3>
-                <pre><code># Generate session header
-session_header = sq.create_header()
-print(f"Generated header: {session_header}")  # Output: "SQ-Xx7nM2"
-
-# Headers automatically expire and cleanup after 10 minutes</code></pre>
-
-                <h3>🌐 Web Application Integration</h3>
-                <pre><code># Flask/FastAPI integration example
-from flask import Flask, request, jsonify
-
-app = Flask(__name__)
-sq = SecureQ(user='app_admin', password='secret', database='webapp')
-
-@app.route('/api/user/<int:user_id>')
-def get_user(user_id):
-    template = "SELECT name, email FROM users WHERE id = 1"
-    actual = f"SELECT name, email FROM users WHERE id = {user_id}"
-    
-    if sq.s_query(template, actual):
-        return jsonify({"status": "success", "data": "user_data"})
-    else:
-        return jsonify({"error": "Security violation"}), 403</code></pre>
-            </section>
-
-            <!-- Best Practices Section -->
-            <section id="best-practices" class="section">
-                <h2>⭐ Best Practices</h2>
-
-                <h3>🔒 Security Best Practices</h3>
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <h4>📋 Template Validation</h4>
-                        <p>Always thoroughly test and validate query templates before production deployment. Templates define your security boundaries.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h4>🔐 Role Minimization</h4>
-                        <p>Create roles with the absolute minimum permissions needed. Follow the principle of least privilege.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h4>📊 Security Monitoring</h4>
-                        <p>Implement comprehensive logging for all fingerprint mismatches and security violations.</p>
-                    </div>
-                    <div class="feature-card">
-                        <h4>🛠️ Error Handling</h4>
-                        <p>Implement robust error handling that doesn't leak sensitive information to potential attackers.</p>
-                    </div>
-                </div>
-
-                <h3>⚡ Performance Optimization</h3>
-                <ul>
-                    <li><strong>Connection Pooling:</strong> Use connection pooling for high-traffic applications</li>
-                    <li><strong>Fingerprint Caching:</strong> Cache fingerprints for frequently used query templates</li>
-                    <li><strong>Background Monitoring:</strong> Monitor cleanup thread performance and resource usage</li>
-                    <li><strong>Query Optimization:</strong> Ensure your template queries are well-optimized</li>
-                </ul>
-
-                <h3>📈 Monitoring & Alerting</h3>
-                <div class="info-box">
-                    <h4>Key Metrics to Track</h4>
-                    <ul>
-                        <li>Fingerprint mismatch frequency (potential attacks)</li>
-                        <li>Role access patterns and usage statistics</li>
-                        <li>Header generation and cleanup cycle performance</li>
-                        <li>Database connection health and response times</li>
-                    </ul>
-                </div>
-
-                <h3>🔄 Integration Patterns</h3>
-                <pre><code># Middleware pattern for web frameworks
-class SecureQMiddleware:
-    def __init__(self, app):
-        self.app = app
-        self.sq = SecureQ(...)
-    
-    def __call__(self, environ, start_response):
-        # Add security headers
-        headers = [('X-SecureQ-Session', self.sq.create_header())]
-        return self.app(environ, start_response)</code></pre>
-
-                <div class="success-box">
-                    <h4>✅ Production Checklist</h4>
-                    <ul>
-                        <li>All query templates tested and validated</li>
-                        <li>Role permissions audited and minimized</li>
-                        <li>Monitoring and alerting configured</li>
-                        <li>Error handling implemented</li>
-                        <li>Background cleanup thread monitored</li>
-                        <li>Database connection security verified</li>
-                    </ul>
-                </div>
-
-                <h3>⚠️ Current Limitations</h3>
-                <div class="warning-box">
-                    <h4>Known Constraints</h4>
-                    <ul>
-                        <li><strong>Single Database:</strong> Designed for single PostgreSQL database</li>
-                        <li><strong>View Naming:</strong> Uses fixed view name 'pview' (potential conflicts)</li>
-                        <li><strong>Role Management:</strong> No built-in role deletion functionality</li>
-                        <li><strong>Query Complexity:</strong> Very complex queries may have fingerprinting edge cases</li>
-                    </ul>
-                </div>
-
-                <h3>🚀 Future Enhancements</h3>
-                <ul>
-                    <li><strong>Multi-Database Support:</strong> Support for multiple database connections</li>
-                    <li><strong>Dynamic View Names:</strong> Generate unique view names per role</li>
-                    <li><strong>Role Lifecycle Management:</strong> Add role deletion and modification</li>
-                    <li><strong>Advanced Fingerprinting:</strong> Enhanced fingerprinting for complex queries</li>
-                    <li><strong>Comprehensive Audit Logging:</strong> Full security event logging system</li>
-                </ul>
-            </section>
-        </main>
-
-        <footer class="footer">
-            <p>🛡️ SecureQ - Advanced Database Security Module | Version 1.0 | December 2024</p>
-            <p>Compatible with PostgreSQL 9.6+ and Python 3.7+</p>
-        </footer>
+            </div>
+        </div>
+        
+        
+        <div class="info-box">
+            <h4>📁 Generated Files</h4>
+            <p><strong>SecureQ_Workflow.mmd</strong> - Pure Mermaid diagram code<br/>
+            <strong>SecureQ_Workflow.html</strong> - This interactive HTML file<br/>
+            <strong>SecureQ_Documentation.md</strong> - Complete module documentation</p>
+        </div>
     </div>
 
     <script>
-        // Initialize Mermaid
+        // Initialize Mermaid with custom config
         mermaid.initialize({
             startOnLoad: true,
             theme: 'default',
@@ -855,52 +213,8 @@ class SecureQMiddleware:
             },
             themeVariables: {
                 fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
-                fontSize: '12px'
+                fontSize: '14px'
             }
-        });
-
-        // Navigation functionality
-        function showSection(sectionId) {
-            // Hide all sections
-            const sections = document.querySelectorAll('.section');
-            sections.forEach(section => {
-                section.classList.remove('active');
-            });
-
-            // Show selected section
-            const targetSection = document.getElementById(sectionId);
-            if (targetSection) {
-                targetSection.classList.add('active');
-            }
-
-            // Update navigation active state
-            const navLinks = document.querySelectorAll('.nav a');
-            navLinks.forEach(link => {
-                link.style.backgroundColor = '';
-            });
-            
-            const activeLink = document.querySelector(`a[href="#${sectionId}"]`);
-            if (activeLink) {
-                activeLink.style.backgroundColor = '#3498db';
-            }
-        }
-
-        // Initialize with overview section
-        document.addEventListener('DOMContentLoaded', function() {
-            showSection('overview');
-        });
-
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                }
-            });
         });
     </script>
 </body>
