@@ -158,16 +158,7 @@
             cursor: grabbing;
         }
 
-        /* Interactive node styles */
-        .node rect, .node circle, .node polygon {
-            transition: all 0.3s ease;
-        }
-
-        .node:hover rect, .node:hover circle, .node:hover polygon {
-            filter: brightness(1.1);
-            stroke-width: 3px;
-        }
-
+        /* Simple node styles without animations */
         .clickable-node {
             cursor: pointer;
         }
@@ -299,7 +290,7 @@
             }
 
             #mermaid-diagram {
-                min-height: 600px;
+                min-height: 800px;
                 padding: 10px;
             }
 
@@ -357,10 +348,10 @@
         
         <div class="diagram-container">
             <div class="diagram-header">
-                <h3>🔄 Interactive Security Workflow</h3>
+                <h3>📋 Linear Security Workflow</h3>
                 <p>
-                    <strong>Interactive Features:</strong> 
-                    Click nodes for details • Drag to pan • Scroll to zoom • Hover for effects
+                    <strong>Mobile-Friendly Features:</strong> 
+                    Click nodes for details • Drag to pan • Scroll to zoom • Clean stack layout
                 </p>
             </div>
             
@@ -373,105 +364,57 @@
             <div id="mermaid-diagram">
                 <div class="mermaid">
 graph TD
-    A["🚀 SecureQ Initialization"] --> B["📊 Database Connection"]
-    B --> C["🗃️ Create header_manager Table"]
-    C --> D["🧹 Start Cleanup Thread"]
+    %% Main Security Flow - Linear Stack Layout
+    A["🚀 SecureQ Initialization<br/>Database Connection & Setup"]
+    A --> B["🗃️ Create header_manager Table<br/>Setup Infrastructure"]
+    B --> C["🧹 Start Background Cleanup Thread<br/>10-minute Intervals"]
     
-    %% Header Management Flow
-    E["📋 Request Session Header"] --> F["🎲 Generate Random String<br/>(6 chars alpranumeric)"]
-    F --> G["🏷️ Create Header: SQ-{random}"]
-    G --> H["🔍 Check Uniqueness in DB"]
-    H --> I{Header Exists?}
-    I -->|Yes| F
-    I -->|No| J["💾 Store Header + Timestamp"]
-    J --> K["✅ Return Header to Client"]
+    C --> D["📋 Step 1: Request Session Header<br/>Client Authentication"]
+    D --> E["🎲 Generate Random Token<br/>SQ-{6chars} Format"]
+    E --> F["🔍 Check Database Uniqueness<br/>Prevent Collisions"]
+    F --> G["💾 Store Header + Timestamp<br/>Session Management"]
     
-    %% Background Cleanup
-    D --> L["⏰ Every 10 Minutes"]
-    L --> M["🗑️ Delete Headers > 10min old"]
-    M --> N["💾 Commit Cleanup"]
-    N --> L
+    G --> H["🔐 Step 2: Create Restricted Role<br/>Access Control Setup"]
+    H --> I["📝 Define Role Parameters<br/>Table: users, Restrict: password"]
+    I --> J["👤 CREATE ROLE with LOGIN<br/>Database User Creation"]
+    J --> K["🔒 Set Role Password<br/>Authentication Setup"]
+    K --> L["📊 CREATE VIEW (Allowed Columns)<br/>Data Access Control"]
+    L --> M["✅ GRANT SELECT on View Only<br/>Minimal Permissions"]
     
-    %% Role Creation Flow
-    O["🔐 Create Restricted Role"] --> P["📝 Role: app_reader<br/>Table: users<br/>Restrict: ['password']"]
-    P --> Q["🔍 Check Role Exists"]
-    Q --> R{Role Exists?}
-    R -->|Yes| S["❌ Role Creation Failed"]
-    R -->|No| T["📋 Get All Table Columns"]
-    T --> U["🚫 Calculate Allowed Columns<br/>(All - Restricted)"]
-    U --> V["👤 CREATE ROLE with LOGIN"]
-    V --> W["🔒 Set Role Password"]
-    W --> X["📊 CREATE VIEW pview<br/>(Allowed columns only)"]
-    X --> Y["🚫 REVOKE ALL on Original Table"]
-    Y --> Z["✅ GRANT SELECT on pview"]
-    Z --> AA["✅ Role Created Successfully"]
+    M --> N["🔒 Step 3: Secure Query Processing<br/>SQL Fingerprint Validation"]
+    N --> O["📝 Template Query Analysis<br/>Structure Mapping"]
+    O --> P["🔤 Generate Template Fingerprint<br/>AST to Character Mapping"]
+    P --> Q["📝 Actual Query Analysis<br/>Runtime Validation"]
+    Q --> R["🔤 Generate Actual Fingerprint<br/>Same Mapping Process"]
     
-    %% Query Security Flow
-    BB["🔒 Secure Query Execution"] --> CC["📝 Template Query:<br/>SELECT name FROM users WHERE id = 1"]
-    CC --> DD["📝 Actual Query:<br/>SELECT name FROM users WHERE id = 42"]
-    DD --> EE["🔍 Generate Template Fingerprint"]
-    EE --> FF["🔤 Parse SQL with sqlglot AST"]
-    FF --> GG["🎯 Map Nodes to Characters:<br/>k=keywords, l=literals, t=tables<br/>c=columns, o=operators, etc."]
-    GG --> HH["🔍 Template Fingerprint: 'kctcol'"]
+    R --> S{🔍 Fingerprint Match?<br/>Security Validation}
+    S -->|❌ No Match| T["🚨 SECURITY VIOLATION<br/>SQL Injection Detected"]
+    T --> U["📝 Log Security Event<br/>Audit Trail"]
+    U --> V["❌ Reject Query<br/>Protection Active"]
     
-    DD --> II["🔍 Generate Actual Fingerprint"]
-    II --> JJ["🔤 Parse SQL with sqlglot AST"]
-    JJ --> KK["🎯 Map Nodes to Characters"]
-    KK --> LL["🔍 Actual Fingerprint: 'kctcol'"]
+    S -->|✅ Match| W["🔐 Connect with Restricted Role<br/>Secure Execution"]
+    W --> X["📊 Execute on Protected View<br/>Limited Data Access"]
+    X --> Y["✅ Return Secure Results<br/>Safe Response"]
     
-    HH --> MM{Fingerprints Match?}
-    LL --> MM
-    MM -->|No| NN["🚨 SECURITY VIOLATION<br/>Query structure mismatch"]
-    MM -->|Yes| OO["🔐 Connect with Restricted Role"]
-    OO --> PP["📊 Execute Query on pview"]
-    PP --> QQ["✅ Return Results Securely"]
+    %% Security Layers - Simplified
+    Y --> Z1["🛡️ Layer 1: Connection Security<br/>PostgreSQL Authentication"]
+    Z1 --> Z2["🛡️ Layer 2: Session Security<br/>Time-based Headers"]
+    Z2 --> Z3["🛡️ Layer 3: Authorization Security<br/>Role-based Access"]
+    Z3 --> Z4["🛡️ Layer 4: Query Security<br/>SQL Fingerprinting"]
+    Z4 --> Z5["🛡️ Layer 5: Execution Security<br/>Minimal Privileges"]
     
-    NN --> RR["📝 Log Security Event"]
-    RR --> SS["❌ Reject Query"]
-    
-    %% Security Layers
-    subgraph "🛡️ Security Layers"
-        TT["1️⃣ Connection Layer<br/>PostgreSQL Authentication"]
-        UU["2️⃣ Session Layer<br/>Time-based Headers"]
-        VV["3️⃣ Authorization Layer<br/>Role-based Access"]
-        WW["4️⃣ Query Layer<br/>SQL Fingerprinting"]
-        XX["5️⃣ Execution Layer<br/>Minimal Privileges"]
-    end
-    
-    %% Fingerprint Character Mapping
-    subgraph "🔤 Fingerprint Mapping"
-        YY["k = Keywords (SELECT, WHERE, JOIN)"]
-        ZZ["l = Literals (values, numbers, NULL)"]
-        AAA["t = Table references"]
-        BBB["c = Column references"]
-        CCC["i = Identifiers (aliases)"]
-        DDD["o = Operators (=, >, AND, OR)"]
-        EEE["f = Functions (COUNT, SUM)"]
-        FFF["s = Structural (parentheses)"]
-    end
-    
-    %% Risk Mitigation
-    subgraph "🚨 Threat Prevention"
-        GGG["SQL Injection ➜ Fingerprint Validation"]
-        HHH["Privilege Escalation ➜ Role Isolation"]
-        III["Data Exposure ➜ Column Restrictions"]
-        JJJ["Session Hijacking ➜ Time Expiration"]
-    end
+    %% Cleanup Process
+    Z5 --> CL["⏰ Background Cleanup<br/>Every 10 Minutes"]
+    CL --> CL2["🗑️ Remove Expired Headers<br/>Automatic Maintenance"]
+    CL2 --> CL3["💾 Commit Changes<br/>Database Cleanup"]
 
-    %% Click interactions
-    click A "showNodeInfo" "Click for details"
-    click BB "showNodeInfo" "Click for details"
-    click O "showNodeInfo" "Click for details"
-    click E "showNodeInfo" "Click for details"
-    click NN "showNodeInfo" "Click for details"
-    click QQ "showNodeInfo" "Click for details"
-
-    style A fill:#e1f5fe
-    style BB fill:#f3e5f5
-    style O fill:#e8f5e8
-    style E fill:#fff3e0
-    style NN fill:#ffebee
-    style QQ fill:#e8f5e8
+    %% Simplified styling for mobile
+    style A fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style H fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style N fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style T fill:#ffebee,stroke:#d32f2f,stroke-width:2px
+    style Y fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style S fill:#fff3e0,stroke:#f57c00,stroke-width:2px
                 </div>
             </div>
         </div>
@@ -613,19 +556,19 @@ graph TD
     <script>
         let currentZoom = 1.0;
         
-        // Initialize Mermaid with enhanced config for better visibility
+        // Initialize Mermaid with mobile-friendly config
         mermaid.initialize({
             startOnLoad: true,
             theme: 'base',
             securityLevel: 'loose',
             flowchart: {
-                useMaxWidth: false,
+                useMaxWidth: true,
                 htmlLabels: true,
-                curve: 'basis',
-                padding: 30,
-                nodeSpacing: 80,
-                rankSpacing: 100,
-                diagramPadding: 40
+                curve: 'linear',
+                padding: 20,
+                nodeSpacing: 60,
+                rankSpacing: 80,
+                diagramPadding: 20
             },
             themeVariables: {
                 fontFamily: 'Inter, Segoe UI, system-ui, -apple-system, sans-serif',
@@ -720,38 +663,38 @@ graph TD
                 });
         }
 
-        // Interactive node information
+        // Interactive node information - Updated for new layout
         function showNodeInfo(nodeId) {
             const nodeDetails = {
                 'A': {
                     title: '🚀 SecureQ Initialization',
-                    description: 'The entry point of SecureQ that establishes database connections and sets up the security infrastructure.',
-                    details: ['Creates PostgreSQL connection', 'Initializes header management table', 'Starts background cleanup processes']
+                    description: 'Starting point that sets up the entire security infrastructure.',
+                    details: ['Database connection setup', 'Table creation', 'Background processes']
                 },
-                'BB': {
-                    title: '🔒 Secure Query Execution',
-                    description: 'The core security mechanism that validates and executes database queries safely.',
-                    details: ['Fingerprint validation', 'Structure comparison', 'Role-based execution']
+                'N': {
+                    title: '🔒 Query Security Processing',
+                    description: 'Core security mechanism using SQL fingerprinting.',
+                    details: ['Template analysis', 'Fingerprint generation', 'Structure validation']
                 },
-                'O': {
-                    title: '🔐 Role Creation',
+                'H': {
+                    title: '🔐 Role-Based Access Control',
                     description: 'Creates restricted database roles with column-level permissions.',
-                    details: ['Dynamic role generation', 'View-based access control', 'Permission management']
+                    details: ['Dynamic role creation', 'View-based access', 'Permission management']
                 },
-                'E': {
-                    title: '📋 Header Management',
-                    description: 'Manages time-based session tokens for secure authentication.',
-                    details: ['Unique token generation', 'Timestamp tracking', 'Automatic expiration']
+                'D': {
+                    title: '📋 Session Management',
+                    description: 'Manages secure session tokens with automatic expiration.',
+                    details: ['Unique token generation', 'Timestamp tracking', 'Collision prevention']
                 },
-                'NN': {
+                'T': {
                     title: '🚨 Security Violation',
-                    description: 'Triggered when query fingerprints don\'t match, indicating potential SQL injection.',
-                    details: ['Fingerprint mismatch detection', 'Attack prevention', 'Security logging']
+                    description: 'Triggered when fingerprints don\'t match - SQL injection detected.',
+                    details: ['Attack prevention', 'Security logging', 'Query rejection']
                 },
-                'QQ': {
-                    title: '✅ Secure Results',
-                    description: 'Successfully validated and executed query returning secure results.',
-                    details: ['Validated query execution', 'Restricted data access', 'Secure result formatting']
+                'Y': {
+                    title: '✅ Secure Execution',
+                    description: 'Successfully validated query executed with minimal privileges.',
+                    details: ['Restricted role execution', 'View-based access', 'Secure results']
                 }
             };
 
@@ -858,18 +801,12 @@ graph TD
             }
         });
 
-        // Add loading indicator and smooth transitions
+        // Simple loading without animations
         document.addEventListener('DOMContentLoaded', function() {
-            // Add smooth loading effect
-            const diagramContainer = document.getElementById('mermaid-diagram');
-            diagramContainer.style.opacity = '0.7';
-            
             // Check if mermaid has rendered
             const checkRendered = setInterval(() => {
                 const svg = document.querySelector('#mermaid-diagram svg');
                 if (svg) {
-                    diagramContainer.style.opacity = '1';
-                    diagramContainer.style.transition = 'opacity 0.5s ease';
                     clearInterval(checkRendered);
                     
                     // Add interactive features to the diagram
@@ -883,7 +820,7 @@ graph TD
 
         // Make diagram interactive
         function makeDigramInteractive(svg) {
-            // Add drag functionality
+            // Simple drag functionality without animations
             svg.style.cursor = 'grab';
             
             let isDragging = false;
@@ -901,7 +838,6 @@ graph TD
                     const deltaX = e.clientX - startX;
                     const deltaY = e.clientY - startY;
                     
-                    const rect = svg.getBoundingClientRect();
                     svg.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(${currentZoom})`;
                 }
             });
@@ -916,23 +852,8 @@ graph TD
                 svg.style.cursor = 'grab';
             });
             
-            // Add hover effects to nodes
-            const nodes = svg.querySelectorAll('.node');
-            nodes.forEach(node => {
-                node.addEventListener('mouseenter', () => {
-                    node.style.filter = 'brightness(1.1) drop-shadow(2px 2px 4px rgba(0,0,0,0.3))';
-                    node.style.transform = 'scale(1.05)';
-                    node.style.transition = 'all 0.3s ease';
-                });
-                
-                node.addEventListener('mouseleave', () => {
-                    node.style.filter = 'none';
-                    node.style.transform = 'scale(1)';
-                });
-            });
-            
-            // Add click handlers to specific nodes
-            const clickableNodes = ['A', 'BB', 'O', 'E', 'NN', 'QQ'];
+            // Simple click handlers without hover effects
+            const clickableNodes = ['A', 'N', 'H', 'D', 'T', 'Y'];
             clickableNodes.forEach(nodeId => {
                 const nodeElement = svg.querySelector(`[id*="${nodeId}"]`);
                 if (nodeElement) {
@@ -944,7 +865,7 @@ graph TD
                 }
             });
             
-            // Add scroll zoom functionality
+            // Scroll zoom functionality
             svg.addEventListener('wheel', (e) => {
                 e.preventDefault();
                 const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
