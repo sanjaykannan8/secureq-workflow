@@ -4,89 +4,324 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SecureQ Workflow Diagram</title>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f5f5f5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
         }
         
         .container {
             max-width: 100%;
             margin: 0 auto;
             background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+        
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
         }
         
         h1 {
             color: #2c3e50;
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5em;
+            margin-bottom: 15px;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            color: #2c3e50;
+            border: 2px solid #dee2e6;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
         }
         
         .diagram-container {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            margin: 30px 0;
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            overflow-x: auto;
+        }
+
+        .diagram-header {
             text-align: center;
-            margin: 20px 0;
-            background-color: #ffffff;
+            margin-bottom: 25px;
+        }
+
+        .diagram-header h3 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .zoom-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .zoom-btn {
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .zoom-btn:hover {
+            background: #e9ecef;
+            transform: scale(1.05);
+        }
+        
+        #mermaid-diagram {
+            min-height: 800px;
+            width: 100%;
+            overflow: visible;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            background: white;
+            border-radius: 15px;
             padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #e1e1e1;
+            margin-top: 20px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
         }
-        
-        .export-instructions {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 30px;
-            border-left: 4px solid #007bff;
-        }
-        
-        .export-instructions h3 {
-            color: #007bff;
-            margin-top: 0;
-        }
-        
-        .export-instructions code {
-            background-color: #e9ecef;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
-        }
-        
-        .export-instructions ol {
-            padding-left: 20px;
-        }
-        
-        .export-instructions li {
-            margin-bottom: 8px;
-        }
-        
+
         .info-box {
-            background-color: #e7f3ff;
-            border: 1px solid #bee5eb;
-            border-radius: 5px;
-            padding: 15px;
-            margin: 20px 0;
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 1px solid rgba(25, 118, 210, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 6px solid #1976d2;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
         
         .info-box h4 {
             margin-top: 0;
-            color: #0c5460;
+            margin-bottom: 15px;
+            color: #1565c0;
+            font-size: 1.2rem;
+            font-weight: 700;
         }
-        
-        #mermaid-diagram {
-            min-height: 600px;
+
+        .files-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .file-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .file-icon {
+            font-size: 24px;
+            width: 40px;
+            text-align: center;
+        }
+
+        .file-info h4 {
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+
+        .file-info p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        /* Enhanced Mobile Responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+                border-radius: 15px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 280px;
+                justify-content: center;
+            }
+            
+            .diagram-container {
+                padding: 15px;
+                margin: 15px 0;
+                overflow-x: scroll;
+            }
+
+            #mermaid-diagram {
+                min-height: 600px;
+                padding: 10px;
+            }
+
+            .zoom-controls {
+                flex-wrap: wrap;
+            }
+
+            .modal-content {
+                padding: 25px;
+                margin: 20px;
+                width: calc(100% - 40px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            #mermaid-diagram {
+                min-height: 500px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🛡️ SecureQ Security Workflow</h1>
+        <div class="header-section">
+            <h1>🛡️ SecureQ Security Workflow</h1>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="openFilesModal()">
+                    📁 View Documentation Files
+                </button>
+                <button class="btn btn-secondary" onclick="resetZoom()">
+                    🔍 Reset Zoom
+                </button>
+                <button class="btn btn-secondary" onclick="exportDiagram()">
+                    📥 Export Diagram
+                </button>
+            </div>
+        </div>
         
         <div class="info-box">
             <h4>📋 About This Diagram</h4>
@@ -94,104 +329,243 @@
         </div>
         
         <div class="diagram-container">
+            <div class="diagram-header">
+                <h3>🔄 Interactive Security Workflow</h3>
+                <p>Scroll horizontally to explore different security layers • Zoom controls below</p>
+            </div>
+            
+            <div class="zoom-controls">
+                <button class="zoom-btn" onclick="zoomDiagram(0.8)">🔍 Zoom Out</button>
+                <button class="zoom-btn" onclick="zoomDiagram(1.0)">📐 100%</button>
+                <button class="zoom-btn" onclick="zoomDiagram(1.2)">🔍 Zoom In</button>
+            </div>
+            
             <div id="mermaid-diagram">
                 <div class="mermaid">
-graph TD
-    A["🚀 SecureQ Initialization"] --> B["📊 Database Connection"]
-    B --> C["🗃️ Create header_manager Table"]
-    C --> D["🧹 Start Cleanup Thread"]
+flowchart TB
+    %% Main Initialization Flow
+    A["SecureQ Initialization"] --> B["Database Connection"]
+    B --> C["Create header_manager Table"]
+    C --> D["Start Background Cleanup Thread"]
     
-    %% Header Management Flow
-    E["📋 Request Session Header"] --> F["🎲 Generate Random String<br/>(6 chars alpranumeric)"]
-    F --> G["🏷️ Create Header: SQ-{random}"]
-    G --> H["🔍 Check Uniqueness in DB"]
-    H --> I{Header Exists?}
-    I -->|Yes| F
-    I -->|No| J["💾 Store Header + Timestamp"]
-    J --> K["✅ Return Header to Client"]
+    %% Core Security Flows
+    D --> E["Security Operations Ready"]
+    E --> F["Header Management"]
+    E --> G["Role Creation"]
+    E --> H["Query Validation"]
     
-    %% Background Cleanup
-    D --> L["⏰ Every 10 Minutes"]
-    L --> M["🗑️ Delete Headers > 10min old"]
-    M --> N["💾 Commit Cleanup"]
-    N --> L
+    %% Header Management Vertical Flow
+    F --> F1["Request Session Header"]
+    F1 --> F2["Generate Random String<br/>6 chars alphanumeric"]
+    F2 --> F3["Create Header: SQ-random"]
+    F3 --> F4["Check Uniqueness in DB"]
+    F4 --> F5{Header Exists?}
+    F5 -->|Yes| F2
+    F5 -->|No| F6["Store Header + Timestamp"]
+    F6 --> F7["Return Header to Client"]
     
-    %% Role Creation Flow
-    O["🔐 Create Restricted Role"] --> P["📝 Role: app_reader<br/>Table: users<br/>Restrict: ['password']"]
-    P --> Q["🔍 Check Role Exists"]
-    Q --> R{Role Exists?}
-    R -->|Yes| S["❌ Role Creation Failed"]
-    R -->|No| T["📋 Get All Table Columns"]
-    T --> U["🚫 Calculate Allowed Columns<br/>(All - Restricted)"]
-    U --> V["👤 CREATE ROLE with LOGIN"]
-    V --> W["🔒 Set Role Password"]
-    W --> X["📊 CREATE VIEW pview<br/>(Allowed columns only)"]
-    X --> Y["🚫 REVOKE ALL on Original Table"]
-    Y --> Z["✅ GRANT SELECT on pview"]
-    Z --> AA["✅ Role Created Successfully"]
+    %% Cleanup Process
+    D --> L1["Every 10 Minutes"]
+    L1 --> L2["Delete Headers older than 10min"]
+    L2 --> L3["Commit Cleanup Transaction"]
+    L3 --> L1
     
-    %% Query Security Flow
-    BB["🔒 Secure Query Execution"] --> CC["📝 Template Query:<br/>SELECT name FROM users WHERE id = 1"]
-    CC --> DD["📝 Actual Query:<br/>SELECT name FROM users WHERE id = 42"]
-    DD --> EE["🔍 Generate Template Fingerprint"]
-    EE --> FF["🔤 Parse SQL with sqlglot AST"]
-    FF --> GG["🎯 Map Nodes to Characters:<br/>k=keywords, l=literals, t=tables<br/>c=columns, o=operators, etc."]
-    GG --> HH["🔍 Template Fingerprint: 'kctcol'"]
+    %% Role Creation Vertical Flow
+    G --> G1["Define Role Parameters<br/>Table: users<br/>Restrict: password"]
+    G1 --> G2["Check if Role Exists"]
+    G2 --> G3{Role Exists?}
+    G3 -->|Yes| G4["Role Creation Failed"]
+    G3 -->|No| G5["Get All Table Columns"]
+    G5 --> G6["Calculate Allowed Columns<br/>All - Restricted"]
+    G6 --> G7["CREATE ROLE with LOGIN"]
+    G7 --> G8["Set Role Password"]
+    G8 --> G9["CREATE VIEW pview<br/>Allowed columns only"]
+    G9 --> G10["REVOKE ALL on Original Table"]
+    G10 --> G11["GRANT SELECT on pview"]
+    G11 --> G12["Role Created Successfully"]
     
-    DD --> II["🔍 Generate Actual Fingerprint"]
-    II --> JJ["🔤 Parse SQL with sqlglot AST"]
-    JJ --> KK["🎯 Map Nodes to Characters"]
-    KK --> LL["🔍 Actual Fingerprint: 'kctcol'"]
+    %% Query Security Vertical Flow
+    H --> H1["Receive Template Query<br/>SELECT name FROM users WHERE id = 1"]
+    H1 --> H2["Receive Actual Query<br/>SELECT name FROM users WHERE id = 42"]
+    H2 --> H3["Generate Template Fingerprint"]
+    H3 --> H4["Parse SQL with sqlglot AST"]
+    H4 --> H5["Map AST Nodes to Characters<br/>k=keywords, l=literals, t=tables<br/>c=columns, o=operators"]
+    H5 --> H6["Template Fingerprint: kctcol"]
     
-    HH --> MM{Fingerprints Match?}
-    LL --> MM
-    MM -->|No| NN["🚨 SECURITY VIOLATION<br/>Query structure mismatch"]
-    MM -->|Yes| OO["🔐 Connect with Restricted Role"]
-    OO --> PP["📊 Execute Query on pview"]
-    PP --> QQ["✅ Return Results Securely"]
+    H2 --> H7["Generate Actual Fingerprint"]
+    H7 --> H8["Parse SQL with sqlglot AST"]
+    H8 --> H9["Map AST Nodes to Characters"]
+    H9 --> H10["Actual Fingerprint: kctcol"]
     
-    NN --> RR["📝 Log Security Event"]
-    RR --> SS["❌ Reject Query"]
+    H6 --> H11{Fingerprints Match?}
+    H10 --> H11
+    H11 -->|No| H12["SECURITY VIOLATION<br/>Query structure mismatch"]
+    H11 -->|Yes| H13["Connect with Restricted Role"]
+    H13 --> H14["Execute Query on pview"]
+    H14 --> H15["Return Results Securely"]
     
-    %% Security Layers
-    subgraph "🛡️ Security Layers"
-        TT["1️⃣ Connection Layer<br/>PostgreSQL Authentication"]
-        UU["2️⃣ Session Layer<br/>Time-based Headers"]
-        VV["3️⃣ Authorization Layer<br/>Role-based Access"]
-        WW["4️⃣ Query Layer<br/>SQL Fingerprinting"]
-        XX["5️⃣ Execution Layer<br/>Minimal Privileges"]
+    H12 --> H16["Log Security Event"]
+    H16 --> H17["Reject Query"]
+    
+    %% Security Architecture
+    subgraph SecurityLayers["Security Layers Architecture"]
+        direction TB
+        SL1["1. Connection Layer<br/>PostgreSQL Authentication"]
+        SL2["2. Session Layer<br/>Time-based Headers"]
+        SL3["3. Authorization Layer<br/>Role-based Access"]
+        SL4["4. Query Layer<br/>SQL Fingerprinting"]
+        SL5["5. Execution Layer<br/>Minimal Privileges"]
+        
+        SL1 --> SL2 --> SL3 --> SL4 --> SL5
     end
     
-    %% Fingerprint Character Mapping
-    subgraph "🔤 Fingerprint Mapping"
-        YY["k = Keywords (SELECT, WHERE, JOIN)"]
-        ZZ["l = Literals (values, numbers, NULL)"]
-        AAA["t = Table references"]
-        BBB["c = Column references"]
-        CCC["i = Identifiers (aliases)"]
-        DDD["o = Operators (=, >, AND, OR)"]
-        EEE["f = Functions (COUNT, SUM)"]
-        FFF["s = Structural (parentheses)"]
+    %% Fingerprint Mapping
+    subgraph FingerprintMap["Fingerprint Character Mapping"]
+        direction TB
+        FM1["k = Keywords SELECT WHERE JOIN"]
+        FM2["l = Literals values numbers NULL"]
+        FM3["t = Table references"]
+        FM4["c = Column references"]
+        FM5["i = Identifiers aliases"]
+        FM6["o = Operators = > < AND OR"]
+        FM7["f = Functions COUNT SUM AVG"]
+        FM8["s = Structural parentheses"]
     end
     
-    %% Risk Mitigation
-    subgraph "🚨 Threat Prevention"
-        GGG["SQL Injection ➜ Fingerprint Validation"]
-        HHH["Privilege Escalation ➜ Role Isolation"]
-        III["Data Exposure ➜ Column Restrictions"]
-        JJJ["Session Hijacking ➜ Time Expiration"]
+    %% Threat Prevention
+    subgraph ThreatPrev["Threat Prevention Mechanisms"]
+        direction TB
+        TP1["SQL Injection<br/>→ Fingerprint Validation"]
+        TP2["Privilege Escalation<br/>→ Role Isolation"]
+        TP3["Data Exposure<br/>→ Column Restrictions"]
+        TP4["Session Hijacking<br/>→ Time Expiration"]
     end
 
-    style A fill:#e1f5fe
-    style BB fill:#f3e5f5
-    style O fill:#e8f5e8
-    style E fill:#fff3e0
-    style NN fill:#ffebee
-    style QQ fill:#e8f5e8
+    %% Styling
+    style A fill:#e1f5fe,stroke:#1976d2,stroke-width:3px
+    style F fill:#fff3e0,stroke:#f57f17,stroke-width:2px
+    style G fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style H fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style H12 fill:#ffebee,stroke:#d32f2f,stroke-width:3px
+    style H15 fill:#e8f5e8,stroke:#388e3c,stroke-width:3px
+    style SecurityLayers fill:#f8f9fa,stroke:#6c757d,stroke-width:2px
+    style FingerprintMap fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style ThreatPrev fill:#fce4ec,stroke:#c2185b,stroke-width:2px
                 </div>
             </div>
         </div>
         
+        <div class="info-box">
+            <h4>🔤 Fingerprint Character Reference</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                <div><strong>k</strong> = Keywords (SELECT, WHERE, JOIN)</div>
+                <div><strong>l</strong> = Literals (values, numbers, NULL)</div>
+                <div><strong>t</strong> = Table references</div>
+                <div><strong>c</strong> = Column references</div>
+                <div><strong>i</strong> = Identifiers (aliases)</div>
+                <div><strong>o</strong> = Operators (=, >, <, AND, OR)</div>
+                <div><strong>f</strong> = Functions (COUNT, SUM, AVG)</div>
+                <div><strong>s</strong> = Structural (parentheses)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Documentation Files Modal -->
+    <div id="filesModal" class="files-modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeFilesModal()">&times;</button>
+            <h2 style="color: #2c3e50; margin-bottom: 30px; text-align: center;">📁 SecureQ Documentation Files</h2>
+            
+            <div class="file-item">
+                <div class="file-icon">🐍</div>
+                <div class="file-info">
+                    <h4>SecureQ.py</h4>
+                    <p>Main Python module containing all security classes and methods</p>
+                </div>
+            </div>
+            
+            <div class="file-item">
+                <div class="file-icon">📊</div>
+                <div class="file-info">
+                    <h4>SecureQ_Workflow.mmd</h4>
+                    <p>Mermaid diagram source code for the security workflow</p>
+                </div>
+            </div>
+            
+            <div class="file-item">
+                <div class="file-icon">📝</div>
+                <div class="file-info">
+                    <h4>SecureQ_Documentation.md</h4>
+                    <p>Comprehensive documentation with usage examples and best practices</p>
+                </div>
+            </div>
+            
+            <div class="file-item">
+                <div class="file-icon">🌐</div>
+                <div class="file-info">
+                    <h4>SecureQ_Workflow.html</h4>
+                    <p>Interactive HTML version of the security workflow diagram</p>
+                </div>
+            </div>
+            
+            <div class="file-item">
+                <div class="file-icon">🐘</div>
+                <div class="file-info">
+                    <h4>postgresql_db.py</h4>
+                    <p>Database connection and setup utilities for PostgreSQL</p>
+                </div>
+            </div>
+            
+            <div class="file-item">
+                <div class="file-icon">📋</div>
+                <div class="file-info">
+                    <h4>requirements.txt</h4>
+                    <p>Python dependencies required for SecureQ module</p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px; text-align: center;">
+                <h4 style="color: #2c3e50; margin-bottom: 15px;">🛡️ Security Features</h4>
+                <p style="margin: 0; color: #6c757d;">
+                    <strong>SQL Fingerprinting</strong> • <strong>Role-Based Access</strong> • <strong>Session Management</strong> • <strong>Query Validation</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="export-instructions" style="display: none;">
+            <h3>📥 Export Instructions</h3>
+            
+            <h4>Method 1: Browser Screenshot (Quick & Easy)</h4>
+            <ol>
+                <li>Open this HTML file in your browser</li>
+                <li>Right-click on the diagram → "Save image as..." or take a screenshot</li>
+                <li>Save as PNG/JPG for presentations</li>
+            </ol>
+            
+            <h4>Method 2: Mermaid CLI (High Quality)</h4>
+            <ol>
+                <li>Install Mermaid CLI: <code>npm install -g @mermaid-js/mermaid-cli</code></li>
+                <li>Convert to PNG: <code>mmdc -i SecureQ_Workflow.mmd -o SecureQ_Workflow.png</code></li>
+                <li>Convert to SVG: <code>mmdc -i SecureQ_Workflow.mmd -o SecureQ_Workflow.svg</code></li>
+                <li>Convert to PDF: <code>mmdc -i SecureQ_Workflow.mmd -o SecureQ_Workflow.pdf</code></li>
+            </ol>
+            
+            <h4>Method 3: Online Mermaid Editor</h4>
+            <ol>
+                <li>Go to <a href="https://mermaid.live" target="_blank">mermaid.live</a></li>
+                <li>Copy content from <code>SecureQ_Workflow.mmd</code> and paste</li>
+                <li>Use export options (PNG, SVG, PDF)</li>
+            </ol>
+            
+            <h4>Method 4: VS Code Extension</h4>
+            <ol>
+                <li>Install "Mermaid Preview" extension in VS Code</li>
+                <li>Open <code>SecureQ_Workflow.mmd</code></li>
+                <li>Right-click → "Open Mermaid Preview"</li>
+                <li>Export from preview panel</li>
+            </ol>
+        </div>
         
         <div class="info-box">
             <h4>📁 Generated Files</h4>
@@ -202,20 +576,212 @@ graph TD
     </div>
 
     <script>
-        // Initialize Mermaid with custom config
+        let currentZoom = 1.0;
+        
+        // Initialize Mermaid with enhanced config for better visibility
         mermaid.initialize({
             startOnLoad: true,
-            theme: 'default',
+            theme: 'base',
+            securityLevel: 'loose',
             flowchart: {
-                useMaxWidth: true,
+                useMaxWidth: false,
                 htmlLabels: true,
-                curve: 'basis'
+                curve: 'basis',
+                padding: 30,
+                nodeSpacing: 80,
+                rankSpacing: 100,
+                diagramPadding: 40
             },
             themeVariables: {
-                fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
-                fontSize: '14px'
+                fontFamily: 'Inter, Segoe UI, system-ui, -apple-system, sans-serif',
+                fontSize: '14px',
+                primaryColor: '#667eea',
+                primaryTextColor: '#2d3748',
+                primaryBorderColor: '#4299e1',
+                lineColor: '#a0aec0',
+                secondaryColor: '#f7fafc',
+                tertiaryColor: '#edf2f7',
+                background: '#ffffff',
+                mainBkg: '#ffffff',
+                secondBkg: '#f8fafc',
+                tertiaryBkg: '#e2e8f0'
             }
         });
+
+        // Modal Functions
+        function openFilesModal() {
+            document.getElementById('filesModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeFilesModal() {
+            document.getElementById('filesModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Zoom Functions
+        function zoomDiagram(scale) {
+            currentZoom = scale;
+            const diagram = document.querySelector('#mermaid-diagram svg');
+            if (diagram) {
+                diagram.style.transform = `scale(${scale})`;
+                diagram.style.transformOrigin = 'top center';
+                
+                // Adjust container height based on zoom
+                const container = document.getElementById('mermaid-diagram');
+                const baseHeight = 800;
+                container.style.minHeight = `${baseHeight * scale}px`;
+            }
+        }
+
+        function resetZoom() {
+            zoomDiagram(1.0);
+            
+            // Scroll to top of diagram
+            const diagramContainer = document.querySelector('.diagram-container');
+            if (diagramContainer) {
+                diagramContainer.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }
+        }
+
+        // Export Function
+        function exportDiagram() {
+            const svg = document.querySelector('#mermaid-diagram svg');
+            if (svg) {
+                // Create a temporary link element
+                const svgData = new XMLSerializer().serializeToString(svg);
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                
+                // Set canvas size based on SVG dimensions
+                const svgBounds = svg.getBoundingClientRect();
+                canvas.width = svgBounds.width * 2; // Higher resolution
+                canvas.height = svgBounds.height * 2;
+                ctx.scale(2, 2);
+                
+                img.onload = function() {
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, canvas.width / 2, canvas.height / 2);
+                    ctx.drawImage(img, 0, 0);
+                    
+                    // Download as PNG
+                    const link = document.createElement('a');
+                    link.download = 'SecureQ_Workflow_Diagram.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                };
+                
+                const svgBlob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+                const url = URL.createObjectURL(svgBlob);
+                img.src = url;
+            } else {
+                alert('Diagram not found. Please wait for the diagram to load completely.');
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('filesModal');
+            if (event.target === modal) {
+                closeFilesModal();
+            }
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeFilesModal();
+            }
+        });
+
+        // Responsive diagram adjustments
+        window.addEventListener('resize', function() {
+            if (window.innerWidth < 768) {
+                // Mobile optimizations
+                const mermaidSvg = document.querySelector('#mermaid-diagram svg');
+                if (mermaidSvg) {
+                    mermaidSvg.style.maxWidth = '100%';
+                    mermaidSvg.style.height = 'auto';
+                }
+            }
+        });
+
+        // Add loading indicator and smooth transitions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add smooth loading effect
+            const diagramContainer = document.getElementById('mermaid-diagram');
+            diagramContainer.style.opacity = '0.7';
+            
+            // Check if mermaid has rendered
+            const checkRendered = setInterval(() => {
+                const svg = document.querySelector('#mermaid-diagram svg');
+                if (svg) {
+                    diagramContainer.style.opacity = '1';
+                    diagramContainer.style.transition = 'opacity 0.5s ease';
+                    clearInterval(checkRendered);
+                    
+                    // Add click handlers to diagram elements for better interactivity
+                    svg.style.cursor = 'grab';
+                    svg.addEventListener('mousedown', () => {
+                        svg.style.cursor = 'grabbing';
+                    });
+                    svg.addEventListener('mouseup', () => {
+                        svg.style.cursor = 'grab';
+                    });
+                }
+            }, 100);
+            
+            // Clear the interval after 10 seconds to prevent infinite checking
+            setTimeout(() => clearInterval(checkRendered), 10000);
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey || event.metaKey) {
+                switch(event.key) {
+                    case '=':
+                    case '+':
+                        event.preventDefault();
+                        zoomDiagram(Math.min(currentZoom + 0.1, 2.0));
+                        break;
+                    case '-':
+                        event.preventDefault();
+                        zoomDiagram(Math.max(currentZoom - 0.1, 0.5));
+                        break;
+                    case '0':
+                        event.preventDefault();
+                        resetZoom();
+                        break;
+                    case 's':
+                        event.preventDefault();
+                        exportDiagram();
+                        break;
+                }
+            }
+        });
+
+        // Add tooltip functionality
+        function addTooltips() {
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    if (this.textContent.includes('Documentation')) {
+                        this.title = 'View all SecureQ project files and documentation';
+                    } else if (this.textContent.includes('Reset')) {
+                        this.title = 'Reset diagram zoom and scroll to top (Ctrl+0)';
+                    } else if (this.textContent.includes('Export')) {
+                        this.title = 'Export diagram as PNG image (Ctrl+S)';
+                    }
+                });
+            });
+        }
+
+        // Initialize tooltips when page loads
+        document.addEventListener('DOMContentLoaded', addTooltips);
     </script>
 </body>
 </html> 
