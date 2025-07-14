@@ -232,9 +232,8 @@ session_header = sq.create_header()  # Returns: "SQ-Xx7nM2"
 4. **Error Handling**: Implement proper error handling for security failures
 
 ### Performance
-1. **Connection Pooling**: Consider connection pooling for high-traffic applications
-2. **Fingerprint Caching**: Cache fingerprints for frequently used queries
-3. **Background Cleanup**: Monitor cleanup thread performance
+1. **Fingerprint Caching**: Cache fingerprints for frequently used queries
+2. **Background Cleanup**: Monitor cleanup thread performance
 
 ### Monitoring
 1. **Query Logs**: Log all fingerprint mismatches for security analysis
@@ -283,38 +282,3 @@ except Exception as e:
     # Handle database errors
     log_error(f"Database error: {e}")
 ```
-
-## Limitations & Considerations
-
-### Current Limitations
-1. **Single Database**: Designed for single PostgreSQL database
-2. **View Naming**: Uses fixed view name 'pview' (potential conflicts)
-3. **Role Management**: No built-in role deletion functionality
-4. **Query Complexity**: Very complex queries may have fingerprinting edge cases
-
-### Future Enhancements
-1. **Multi-Database Support**: Support for multiple database connections
-2. **Dynamic View Names**: Generate unique view names per role
-3. **Role Lifecycle Management**: Add role deletion and modification
-4. **Advanced Fingerprinting**: Enhanced fingerprinting for complex queries
-5. **Audit Logging**: Comprehensive security event logging
-
-## Security Considerations
-
-### Threat Model
-- **SQL Injection**: Mitigated through fingerprinting and parameterization
-- **Privilege Escalation**: Prevented through role isolation
-- **Data Exposure**: Limited through column-level restrictions
-- **Session Hijacking**: Mitigated through time-based header expiration
-
-### Compliance
-- Supports compliance requirements for data access control
-- Provides audit trail through database logs
-- Implements principle of least privilege
-- Ensures data minimization through column restrictions
-
----
-
-**Version**: 1.0  
-**Last Updated**: December 2024  
-**Compatibility**: PostgreSQL 9.6+, Python 3.7+ 
